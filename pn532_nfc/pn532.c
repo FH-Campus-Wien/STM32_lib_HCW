@@ -1,3 +1,8 @@
+/**
+ * @file pn532.c
+ * @brief PN532 I2C transport and passive Type A reader implementation.
+ */
+
 #include "pn532.h"
 
 #include <string.h>
@@ -21,6 +26,11 @@ static const uint8_t pn532_ack_frame[] = {
   0x00U, 0x00U, 0xFFU, 0x00U, 0xFFU, 0x00U
 };
 
+/**
+ * @brief Abort a command that may still be active after an MCU reset.
+ * @param handle Initialized driver instance.
+ * @return PN532_OK when the abort ACK was accepted, otherwise an error code.
+ */
 static PN532_Status PN532_AbortCurrentCommand(PN532_Handle *handle)
 {
   uint32_t started = HAL_GetTick();
@@ -43,6 +53,11 @@ static PN532_Status PN532_AbortCurrentCommand(PN532_Handle *handle)
   return PN532_ERROR_I2C;
 }
 
+/**
+ * @brief Poll the I2C status byte until the PN532 has a frame available.
+ * @param handle Initialized driver instance.
+ * @return PN532_OK when ready or PN532_ERROR_TIMEOUT on expiration.
+ */
 static PN532_Status PN532_WaitReady(PN532_Handle *handle)
 {
   uint8_t status = 0U;
@@ -65,6 +80,13 @@ static PN532_Status PN532_WaitReady(PN532_Handle *handle)
   return PN532_ERROR_TIMEOUT;
 }
 
+/**
+ * @brief Wrap a command payload in a normal PN532 information frame and send it.
+ * @param handle Initialized driver instance.
+ * @param payload Command byte followed by its parameters.
+ * @param payload_length Number of bytes in payload.
+ * @return PN532_OK on success, otherwise an argument or I2C error.
+ */
 static PN532_Status PN532_WriteCommand(PN532_Handle *handle,
                                        const uint8_t *payload,
                                        uint8_t payload_length)
@@ -107,6 +129,11 @@ static PN532_Status PN532_WriteCommand(PN532_Handle *handle,
   return PN532_OK;
 }
 
+/**
+ * @brief Wait for and validate the six-byte PN532 ACK frame.
+ * @param handle Initialized driver instance.
+ * @return PN532_OK for a valid ACK or a transport/frame error.
+ */
 static PN532_Status PN532_ReadAck(PN532_Handle *handle)
 {
   uint8_t frame[sizeof(pn532_ack_frame) + 1U];
@@ -133,6 +160,14 @@ static PN532_Status PN532_ReadAck(PN532_Handle *handle)
   return PN532_OK;
 }
 
+/**
+ * @brief Read and validate a response with an expected payload length.
+ * @param handle Initialized driver instance.
+ * @param command Original command code used to verify the response code.
+ * @param response Destination for response data, excluding TFI and code.
+ * @param response_length Exact number of response data bytes expected.
+ * @return PN532_OK on success, otherwise an argument, transport or frame error.
+ */
 static PN532_Status PN532_ReadResponse(PN532_Handle *handle,
                                        uint8_t command,
                                        uint8_t *response,
@@ -194,6 +229,15 @@ static PN532_Status PN532_ReadResponse(PN532_Handle *handle,
   return PN532_OK;
 }
 
+/**
+ * @brief Read and validate a variable-length passive-target response.
+ * @param handle Initialized driver instance.
+ * @param command Original command code used to verify the response code.
+ * @param response Destination buffer for response data.
+ * @param response_capacity Maximum bytes accepted by response.
+ * @param response_length Receives the actual response data length.
+ * @return PN532_OK on success, otherwise an argument, transport or frame error.
+ */
 static PN532_Status PN532_ReadVariableResponse(PN532_Handle *handle,
                                                uint8_t command,
                                                uint8_t *response,
@@ -264,6 +308,15 @@ static PN532_Status PN532_ReadVariableResponse(PN532_Handle *handle,
   return PN532_OK;
 }
 
+/**
+ * @brief Execute one command with a fixed-length response.
+ * @param handle Initialized driver instance.
+ * @param command Command byte followed by its parameters.
+ * @param command_length Number of bytes in command.
+ * @param response Destination for response data, or NULL for no data.
+ * @param response_length Exact response data length expected.
+ * @return PN532_OK on success or the first protocol/transport error.
+ */
 static PN532_Status PN532_ExecuteCommand(PN532_Handle *handle,
                                          const uint8_t *command,
                                          uint8_t command_length,
@@ -284,6 +337,16 @@ static PN532_Status PN532_ExecuteCommand(PN532_Handle *handle,
   return status;
 }
 
+/**
+ * @brief Execute one command with a variable-length response.
+ * @param handle Initialized driver instance.
+ * @param command Command byte followed by its parameters.
+ * @param command_length Number of bytes in command.
+ * @param response Destination buffer for response data.
+ * @param response_capacity Maximum bytes accepted by response.
+ * @param response_length Receives the actual response data length.
+ * @return PN532_OK on success or the first protocol/transport error.
+ */
 static PN532_Status PN532_ExecuteVariableCommand(PN532_Handle *handle,
                                                  const uint8_t *command,
                                                  uint8_t command_length,
