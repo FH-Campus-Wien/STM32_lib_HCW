@@ -1,0 +1,31 @@
+PROJECT_NAME           = "STM32 Library HCW"
+PROJECT_BRIEF          = "STM32 HAL drivers for BMP280/BME280 and PN532"
+PROJECT_NUMBER         = ""
+OUTPUT_DIRECTORY       = doc/generated
+CREATE_SUBDIRS         = NO
+
+INPUT                  = README.md doxygen_pages.dox bmp280_temp pn532_nfc
+FILE_PATTERNS          = *.c *.h *.md
+RECURSIVE              = YES
+EXCLUDE_PATTERNS       = */doc/*
+USE_MDFILE_AS_MAINPAGE = README.md
+
+OUTPUT_LANGUAGE        = German
+EXTRACT_ALL            = YES
+EXTRACT_STATIC         = YES
+SOURCE_BROWSER         = YES
+INLINE_SOURCES         = NO
+REFERENCES_RELATION    = YES
+
+GENERATE_HTML          = YES
+HTML_OUTPUT            = html
+GENERATE_TREEVIEW      = YES
+DISABLE_INDEX          = NO
+
+GENERATE_LATEX         = NO
+
+HAVE_DOT               = NO
+QUIET                  = NO
+WARN_IF_UNDOCUMENTED   = YES
+WARN_IF_DOC_ERROR      = YES
+WARN_AS_ERROR          = NO

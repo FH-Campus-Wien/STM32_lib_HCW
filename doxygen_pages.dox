@@ -1,0 +1,55 @@
+/**
+ * @page bmp280_driver BMP280/BME280-Treiber
+ *
+ * STM32-HAL-Treiber für Temperatur und Luftdruck über I2C. Unterstützt werden
+ * der BMP280 und die Temperatur-/Druckfunktionen des BME280.
+ *
+ * @section bmp280_driver_usage Verwendung
+ *
+ * 1. I2C mit STM32CubeMX konfigurieren.
+ * 2. bmp280.c und bmp280.h in das Projekt übernehmen.
+ * 3. Mit bmp280_init() initialisieren.
+ * 4. Mit bmp280_read_all() ein konsistentes Messwertpaar lesen.
+ *
+ * @section bmp280_driver_api API
+ *
+ * - bmp280_init()
+ * - bmp280_read_temperature()
+ * - bmp280_read_pressure()
+ * - bmp280_read_all()
+ * - bmp280_status_t
+ * - bmp280_t
+ *
+ * Die ausführliche Einbindung, Statuscode-Tabelle und Hardwarehinweise stehen
+ * in der Datei bmp280_temp/README.md. Vollständiger Beispielcode befindet sich
+ * in bmp280_temp/example/main.c.
+ */
+
+/**
+ * @page pn532_driver PN532-NFC-Treiber
+ *
+ * STM32-HAL-Treiber für ein PN532-Modul im I2C-Modus. Der Treiber erkennt eine
+ * passive ISO/IEC-14443-Type-A-Karte und liest deren UID, ATQA und SAK.
+ *
+ * @section pn532_driver_usage Verwendung
+ *
+ * 1. Das Modul auf I2C stellen und I2C mit STM32CubeMX konfigurieren.
+ * 2. pn532.c und pn532.h in das Projekt übernehmen.
+ * 3. PN532_Init(), PN532_GetFirmwareVersion() und PN532_ConfigureReader()
+ *    aufrufen.
+ * 4. Karten mit PN532_ReadPassiveTarget() erkennen.
+ *
+ * @section pn532_driver_api API
+ *
+ * - PN532_Init()
+ * - PN532_GetFirmwareVersion()
+ * - PN532_SAMConfigure()
+ * - PN532_ConfigureReader()
+ * - PN532_ReadPassiveTarget()
+ * - PN532_Status
+ * - PN532_Target
+ *
+ * Die ausführliche Einbindung, Schalterstellung und Statuscode-Tabelle stehen
+ * in der Datei pn532_nfc/README.md. Vollständiger Beispielcode befindet sich
+ * in pn532_nfc/example/main.c.
+ */

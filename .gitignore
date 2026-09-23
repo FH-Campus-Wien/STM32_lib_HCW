@@ -1,0 +1,21 @@
+.DS_Store
+Thumbs.db
+*.swp
+*~
+
+# Generated Doxygen output
+doc/generated/
+
+# STM32/C/C++ build artifacts
+Debug/
+Release/
+build/
+cmake-build-*/
+*.o
+*.d
+*.a
+*.elf
+*.bin
+*.hex
+*.map
+*.list
