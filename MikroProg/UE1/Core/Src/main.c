@@ -19,7 +19,6 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "gpio.h"
-#include "stm32f4xx_hal.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -44,34 +43,33 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-static uint16_t leds[] = {GREEN_LED_Pin, ORANGE_LED_Pin, RED_LED_Pin, BLUE_LED_Pin};
+static const uint16_t leds[] = {GREEN_LED_Pin, ORANGE_LED_Pin, RED_LED_Pin, BLUE_LED_Pin};
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
-void HelloMicroController(void);
-void runInCircles(void);
+static void HelloMicroController(void);
+static void runInCircles(void);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-void HelloMicroController(void) {
+static void HelloMicroController(void) {
   HAL_GPIO_TogglePin(GREEN_LED_GPIO_Port, GREEN_LED_Pin);
   HAL_Delay(500);
 }
 
-void runInCircles(void) {
+static void runInCircles(void) {
   static uint8_t led;
-  static uint32_t current_time;
   static uint32_t previous_time;
 
-  current_time = HAL_GetTick();
-  if (current_time - previous_time > 500U) {
-    HAL_GPIO_WritePin(GPIOD, GREEN_LED_Pin | RED_LED_Pin | BLUE_LED_Pin | ORANGE_LED_Pin,RESET);
-    HAL_GPIO_WritePin(GPIOD, leds[led], SET);
-    if (led % 4 == 3) led = 0;
-    else led++;
+  uint32_t current_time = HAL_GetTick();
+
+  if (current_time - previous_time >= 500U) {
+    HAL_GPIO_WritePin(GPIOD, GREEN_LED_Pin | RED_LED_Pin | BLUE_LED_Pin | ORANGE_LED_Pin,GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(GPIOD, leds[led], GPIO_PIN_SET);
+    led = (led + 1U) % 4U;
     previous_time = current_time;
   }
 }
