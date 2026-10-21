@@ -19,6 +19,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "gpio.h"
+#include "stm32f4xx_hal.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -43,18 +44,37 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+static uint16_t leds[] = {GREEN_LED_Pin, ORANGE_LED_Pin, RED_LED_Pin, BLUE_LED_Pin};
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
-
+void HelloMicroController(void);
+void runInCircles(void);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+void HelloMicroController(void) {
+  HAL_GPIO_TogglePin(GREEN_LED_GPIO_Port, GREEN_LED_Pin);
+  HAL_Delay(500);
+}
 
+void runInCircles(void) {
+  static uint8_t led;
+  static uint32_t current_time;
+  static uint32_t previous_time;
+
+  current_time = HAL_GetTick();
+  if (current_time - previous_time > 500U) {
+    HAL_GPIO_WritePin(GPIOD, GREEN_LED_Pin | RED_LED_Pin | BLUE_LED_Pin | ORANGE_LED_Pin,RESET);
+    HAL_GPIO_WritePin(GPIOD, leds[led], SET);
+    if (led % 4 == 3) led = 0;
+    else led++;
+    previous_time = current_time;
+  }
+}
 /* USER CODE END 0 */
 
 /**
@@ -97,6 +117,8 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+    // HelloMicroController();
+    runInCircles();
   }
   /* USER CODE END 3 */
 }
@@ -133,7 +155,7 @@ void SystemClock_Config(void)
                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_HSI;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
-  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
+  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
 
   if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0) != HAL_OK)
